@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Domain
+﻿namespace Entities
 {
     public class Comment
     {
