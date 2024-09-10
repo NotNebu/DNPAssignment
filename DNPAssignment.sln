@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{0C785A02-D3DF-417F-BD77-04E4616E4008}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{CDB215D0-399A-416A-B1CB-3227EF8480D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{F7C74E8B-3D91-4444-B9F7-33FAA720A587}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDB215D0-399A-416A-B1CB-3227EF8480D7} = {0C785A02-D3DF-417F-BD77-04E4616E4008}
+		{F7C74E8B-3D91-4444-B9F7-33FAA720A587} = {0C785A02-D3DF-417F-BD77-04E4616E4008}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDB215D0-399A-416A-B1CB-3227EF8480D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDB215D0-399A-416A-B1CB-3227EF8480D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDB215D0-399A-416A-B1CB-3227EF8480D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDB215D0-399A-416A-B1CB-3227EF8480D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7C74E8B-3D91-4444-B9F7-33FAA720A587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7C74E8B-3D91-4444-B9F7-33FAA720A587}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7C74E8B-3D91-4444-B9F7-33FAA720A587}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7C74E8B-3D91-4444-B9F7-33FAA720A587}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
