@@ -36,7 +36,7 @@ public class IPostLikeRepository : IRepository<PostLike>
 
     public async Task<PostLike> GetByIdAsync(int id)
     {
-        return await _context.PostLikes.FindAsync(id);
+        return await _context.PostLikes.FindAsync(id) ?? throw new InvalidOperationException(); 
     }
 
     public async Task<PostLike> UpdateAsync(PostLike entity)

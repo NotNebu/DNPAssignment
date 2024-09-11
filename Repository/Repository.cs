@@ -27,7 +27,7 @@ namespace Repository
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet.FindAsync(id) ?? throw new InvalidOperationException();
         }
 
         public async Task<T> UpdateAsync(T entity)
