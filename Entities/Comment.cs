@@ -2,6 +2,10 @@
 {
     public class Comment
     {
+        public Comment()
+        {
+            // Constructor for EF Core
+        }
         public Comment(int id, string body, int postId, Post post, int userId, User user)
         {
             Id = id;

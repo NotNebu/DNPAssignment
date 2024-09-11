@@ -2,6 +2,10 @@
 
 public class PostLike
 {
+    public PostLike()
+    {
+        // Constructor for EF Core
+    }
     public PostLike(int id, int postId, Post post, int userId, User user, bool isLiked)
     {
         Id = id;

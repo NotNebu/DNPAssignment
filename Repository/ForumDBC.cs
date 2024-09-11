@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
-    public class ForumDBC : DbContext
+    public class ForumDbc : DbContext
     {
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostLike> PostLikes { get; set; }
 
-        public ForumDBC(DbContextOptions<ForumDBC> options) : base(options)
+        public ForumDbc(DbContextOptions<ForumDbc> options) : base(options)
         {
         }
-
+        
        /* protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

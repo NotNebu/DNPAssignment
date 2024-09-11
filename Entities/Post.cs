@@ -2,6 +2,10 @@
 
 public class Post
 {
+    public Post()
+    {
+        // Constructor for EF Core
+    }
     public Post(int id, string title, string body, int userId, User user, ICollection<Comment> comments)
     {
         Id = id;

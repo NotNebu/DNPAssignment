@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
-public class IPostLikeRepository : IRepository<PostLike>
+public class PostLikeRepository : IRepository<PostLike>
 {
-    private readonly ForumDBC _context;
+    private readonly ForumDbc _context;
     
-    public IPostLikeRepository(ForumDBC context)
+    public PostLikeRepository(ForumDbc context)
     {
         _context = context;
     }

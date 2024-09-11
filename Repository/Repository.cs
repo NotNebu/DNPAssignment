@@ -4,10 +4,10 @@ namespace Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly ForumDBC _context;
+        private readonly ForumDbc _context;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(ForumDBC context)
+        public Repository(ForumDbc context)
         {
             _dbSet = context.Set<T>();
             _context = context;

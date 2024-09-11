@@ -2,6 +2,10 @@
 
 public class User
 {
+    public User()
+    {
+        // Constructor for EF Core
+    }
     public User(int id, string userName, string password, ICollection<Post> posts, ICollection<Comment> comments)
     {
         Id = id;

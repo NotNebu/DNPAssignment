@@ -2,6 +2,11 @@
 
 public class CommentLike
 {
+
+    public CommentLike()
+    {
+        // Constructor for EF Core
+    }
     public CommentLike(int id, int commentId, Comment comment, int userId, User user, bool isLiked)
     {
         Id = id;
