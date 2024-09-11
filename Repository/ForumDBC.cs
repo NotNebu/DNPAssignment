@@ -12,7 +12,7 @@ namespace Repository
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+       /* protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             
@@ -33,6 +33,6 @@ namespace Repository
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
-        }
+        } */
     }
 }
