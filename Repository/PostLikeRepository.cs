@@ -1,7 +1,8 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
-namespace Repository;
+namespace RepositoryContracts;
 
 public class PostLikeRepository : IRepository<PostLike>
 {
