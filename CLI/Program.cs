@@ -4,22 +4,27 @@ using Microsoft.EntityFrameworkCore;
 using Repository;
 using RepositoryContracts;
 
-namespace CLI;
-
-public class Program
+namespace CLI
 {
-    public static async Task Main(string[] args)
+    public class Program
     {
-        var options = new DbContextOptionsBuilder<ForumDbc>()
-            .UseInMemoryDatabase(databaseName: "ForumDb")
-            .Options;
+        public static async Task Main(string[] args)
+        {
+            var options = new DbContextOptionsBuilder<ForumDbc>()
+                .UseInMemoryDatabase(databaseName: "ForumDb")
+                .Options;
 
-        IRepository<User> userRepository = new Repository<User>(new ForumDbc(options));
-        IRepository<Post> postRepository = new Repository<Post>(new ForumDbc(options));
-        IRepository<Comment> commentRepository = new Repository<Comment>(new ForumDbc(options));
+            using var context = new ForumDbc(options);
+            
+            context.Database.EnsureCreated(); 
 
-        var cliApp = new CliApp(userRepository, postRepository, commentRepository);
+            IRepository<User> userRepository = new Repository<User>(context);
+            IRepository<Post> postRepository = new Repository<Post>(context);
+            IRepository<Comment> commentRepository = new Repository<Comment>(context);
 
-        await cliApp.RunAsync();
+            var cliApp = new CliApp(userRepository, postRepository, commentRepository);
+
+            await cliApp.RunAsync();
+        }
     }
 }
