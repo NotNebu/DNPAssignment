@@ -12,9 +12,9 @@ namespace CLI.UI.ManagePosts
 
         public ManagePostsView(IRepository<Post> postRepository, IRepository<Comment> commentRepository, IRepository<User> userRepository)
         {
-            _createPostView = new CreatePostView(postRepository, userRepository); // Pass userRepository to CreatePostView
+            _createPostView = new CreatePostView(postRepository, userRepository); 
             _listPostsView = new ListPostsView(postRepository);
-            _addCommentView = new AddCommentView(commentRepository, postRepository, userRepository); // Pass postRepository and userRepository to AddCommentView
+            _addCommentView = new AddCommentView(commentRepository, postRepository, userRepository);
             _listCommentsView = new ListCommentsView(commentRepository);
         }
 

@@ -30,6 +30,11 @@ public class PostLikeRepository : IRepository<PostLike>
         return true;
     }
 
+    public Task<bool> UsernameExistsAsync(string username)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<PostLike>> GetAllAsync()
     {
         return await _context.PostLikes.ToListAsync();

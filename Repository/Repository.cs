@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace Repository
@@ -49,6 +50,15 @@ namespace Repository
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
             return true;
+        }
+        
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            if (typeof(T) == typeof(User))
+            {
+                return await _context.Users.AnyAsync(u => u.UserName.Equals(username, StringComparison.OrdinalIgnoreCase));
+            }
+            return false;
         }
     }
 }
