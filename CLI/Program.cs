@@ -1,7 +1,7 @@
 ﻿using CLI.UI;
 using Entities;
 using Microsoft.EntityFrameworkCore;
-using Repository;
+using FileRepository;
 using RepositoryContracts;
 
 namespace CLI
@@ -18,9 +18,9 @@ namespace CLI
             
             context.Database.EnsureCreated(); 
             
-            IRepository<User> userRepository = new Repository<User>(context);
-            IRepository<Post> postRepository = new Repository<Post>(context);
-            IRepository<Comment> commentRepository = new Repository<Comment>(context);
+            IFileRepository<User> userRepository = new FileRepository<User>("users");
+            IFileRepository<Post> postRepository = new FileRepository<Post>("posts");
+            IFileRepository<Comment> commentRepository = new FileRepository<Comment>("comments");
 
             var cliApp = new CliApp(userRepository, postRepository, commentRepository);
 
