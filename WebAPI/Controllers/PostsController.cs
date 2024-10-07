@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using Entities;
 using ApiContracts.DTOs;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
