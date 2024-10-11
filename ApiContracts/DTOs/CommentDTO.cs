@@ -1,5 +1,6 @@
 namespace ApiContracts.DTOs
 {
+    // Data Transfer Object til at håndtere kommentarer
     public class CommentDTO
     {
         public int Id { get; set; }

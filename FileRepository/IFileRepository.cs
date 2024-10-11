@@ -1,5 +1,6 @@
 namespace RepositoryContracts;
 
+// Interface til at tilgå filer - Bliver ikke rigtig brugt tho
 public interface IFileRepository<T> : IRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync();
