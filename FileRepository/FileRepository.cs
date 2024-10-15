@@ -2,6 +2,8 @@ using System.Text.Json;
 using Entities;
 using RepositoryContracts;
 
+namespace FileRepository;
+
 public class FileRepository<T> : IRepository<T> where T : class
 {
     private readonly string filePath;
@@ -46,7 +48,7 @@ public class FileRepository<T> : IRepository<T> where T : class
     {
         var entities = await GetAllEntitiesAsync();
         return entities.SingleOrDefault(e => (int)typeof(T).GetProperty("Id")?.GetValue(e) == id)
-            ?? throw new InvalidOperationException();
+               ?? throw new InvalidOperationException();
     }
 
     // Opdaterer en eksisterende entitet asynkront
