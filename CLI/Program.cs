@@ -1,39 +1,26 @@
 ﻿using CLI.UI;
 using Entities;
-using Microsoft.EntityFrameworkCore;
-using FileRepository;
 using RepositoryContracts;
+
 
 namespace CLI
 {
-    // Programklasse til at starte Client Test applikationen
     public class Program
     {
-        // Main-metode til at starte Client Test applikationen
+        // Main metode til at starte programmet
         public static async Task Main(string[] args)
         {
-            // Opretter en in-memory database (Step 2)
-            var options = new DbContextOptionsBuilder<ForumDbc>()
-                .UseInMemoryDatabase(databaseName: "ForumDb")
-                .Options;
+            // Laver et nyt fil repository for brugere
+            IRepository<User> userRepository = new FileRepository<User>("users");
+            // Laver et nyt fil repository for posts
+            IRepository<Post> postRepository = new FileRepository<Post>("posts");
+            // Laver et nyt fil repository for kommentarer
+            IRepository<Comment> commentRepository = new FileRepository<Comment>("comments");
 
-            // Opretter en context til databasen
-            using var context = new ForumDbc(options);
-            
-            // Sikrer, at databasen er oprettet
-            context.Database.EnsureCreated(); 
-            
-            // Opretter en ny bruger for at teste applikationen
-            IFileRepository<User> userRepository = new FileRepository<User>("users");
-            // Opretter en ny post for at teste applikationen
-            IFileRepository<Post> postRepository = new FileRepository<Post>("posts");
-            // Opretter en ny kommentar for at teste applikationen
-            IFileRepository<Comment> commentRepository = new FileRepository<Comment>("comments");
-
-            // Opretter en ny CLI applikation
+            // Laver et nyt CLI program
             var cliApp = new CliApp(userRepository, postRepository, commentRepository);
 
-            // Kører CLI applikationen
+            // Kører programmet
             await cliApp.RunAsync();
         }
     }

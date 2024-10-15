@@ -1,6 +1,5 @@
 using Entities;
 using RepositoryContracts;
-using FileRepository;
 using WebAPI.Middleware;
 
 // Opretter en builder til at konfigurere applikationen
