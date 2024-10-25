@@ -27,17 +27,14 @@
     {
         try
         {
-            // Log the data being sent
             Console.WriteLine($"Attempting to register user: Username: {newUser.UserName}, Password: {newUser.Password}");
             
             var createdUser = await UserService.AddUserAsync(newUser);
             Console.WriteLine("User registered successfully.");
-            // You can navigate to another page or show a success message here
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error registering user: {ex.Message}");
-            // Optionally, show a user-friendly error message
         }
     }
 
