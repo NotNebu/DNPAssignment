@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     
     // Route til at tilgå posts
-    [Route("[controller]")]
+    [Route("api/posts")]
     
     // PostController til at håndtere posts
     public class PostsController : ControllerBase
@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente alle posts baseret på titel og userId
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllPosts(string? title = null, int? userId = null)
+        public async Task<ActionResult<IEnumerable<PostDto>>> GetAllPosts(string? title = null, int? userId = null)
         {
             // Henter alle posts
             var posts = await _postRepository.GetAllAsync();
@@ -42,10 +42,11 @@ namespace WebAPI.Controllers
             }
             
             // Omdanner posts til DTO'er
-            var postDtos = posts.Select(p => new PostDTO
+            var postDtos = posts.Select(p => new PostDto
             {
                 Id = p.Id,
                 Title = p.Title,
+                Body = p.Body,
                 UserId = p.UserId
             });
 
@@ -57,7 +58,7 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         
         // Metode til at hente en post baseret på dens Id
-        public async Task<ActionResult<PostDTO>> GetPostById(int id)
+        public async Task<ActionResult<PostDto>> GetPostById(int id)
         {
             // Henter post baseret på Id
             var post = await _postRepository.GetByIdAsync(id);
@@ -69,10 +70,11 @@ namespace WebAPI.Controllers
             }
 
             // Omdanner post til DTO
-            var postDto = new PostDTO
+            var postDto = new PostDto
             {
                 Id = post.Id,
                 Title = post.Title,
+                Body = post.Body,
                 UserId = post.UserId
             };
 
@@ -82,7 +84,7 @@ namespace WebAPI.Controllers
         
         // Metode til at oprette en post
         [HttpPost]
-        public async Task<ActionResult<PostDTO>> CreatePost([FromBody] CreatePostDTO request)
+        public async Task<ActionResult<PostDto>> CreatePost([FromBody] CreatePostDto request)
         {
             // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
@@ -94,6 +96,7 @@ namespace WebAPI.Controllers
             var post = new Post
             {
                 Title = request.Title,
+                Body = request.Body,
                 UserId = request.UserId
             };
 
@@ -101,10 +104,11 @@ namespace WebAPI.Controllers
             var createdPost = await _postRepository.AddAsync(post);
 
             // Omdanner post til en DTO
-            var postDto = new PostDTO
+            var postDto = new PostDto
             {
                 Id = createdPost.Id,
                 Title = createdPost.Title,
+                Body = createdPost.Body,
                 UserId = createdPost.UserId
             };
 
@@ -114,7 +118,7 @@ namespace WebAPI.Controllers
         
         // Metode til at opdatere en post
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePost(int id, [FromBody] CreatePostDTO request)
+        public async Task<IActionResult> UpdatePost(int id, [FromBody] CreatePostDto request)
         {
             // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)

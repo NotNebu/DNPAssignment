@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     
     // Route til at tilgå post likes
-    [Route("[controller]")]
+    [Route("api/postlikes")]
     
     // PostLikeController til at håndtere post likes
     public class PostLikesController : ControllerBase
@@ -24,13 +24,13 @@ namespace WebAPI.Controllers
         
         // Metode til at hente alle post likes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostLikeDTO>>> GetAllPostLikes()
+        public async Task<ActionResult<IEnumerable<PostLikeDto>>> GetAllPostLikes()
         {
             // Henter alle post likes
             var postLikes = await _postLikeRepository.GetAllAsync();
 
             // Omdanner post likes til DTO'er
-            var postLikeDtos = postLikes.Select(pl => new PostLikeDTO
+            var postLikeDtos = postLikes.Select(pl => new PostLikeDto
             {
                 Id = pl.Id,
                 PostId = pl.PostId,
@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente et post like baseret på dets Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<PostLikeDTO>> GetPostLikeById(int id)
+        public async Task<ActionResult<PostLikeDto>> GetPostLikeById(int id)
         {
             // Henter post like baseret på Id
             var postLike = await _postLikeRepository.GetByIdAsync(id);
@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
             }
 
             // Omdanner post like til DTO
-            var postLikeDto = new PostLikeDTO
+            var postLikeDto = new PostLikeDto
             {
                 Id = postLike.Id,
                 PostId = postLike.PostId,
@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
         
         // Metode til at oprette et post like
         [HttpPost]
-        public async Task<ActionResult<PostLikeDTO>> CreatePostLike([FromBody] PostLikeDTO request)
+        public async Task<ActionResult<PostLikeDto>> CreatePostLike([FromBody] PostLikeDto request)
         {
             // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
             var createdPostLike = await _postLikeRepository.AddAsync(postLike);
 
             // Omdanner post like til en DTO
-            var postLikeDto = new PostLikeDTO
+            var postLikeDto = new PostLikeDto
             {
                 Id = createdPostLike.Id,
                 PostId = createdPostLike.PostId,
@@ -101,7 +101,7 @@ namespace WebAPI.Controllers
         
         // Metode til at opdatere et post like
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePostLike(int id, [FromBody] PostLikeDTO request)
+        public async Task<IActionResult> UpdatePostLike(int id, [FromBody] PostLikeDto request)
         {
             // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)

@@ -1,0 +1,57 @@
+@page "/create-post"
+@using ApiContracts.DTOs
+@using ForumApp.Services
+
+@inject IPostService PostService
+
+<h2>Create a New Post</h2>
+<EditForm Model="@newPost" OnValidSubmit="HandleValidSubmit" class="create-post-form">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="title">Post Title</label>
+        <InputText id="title" @bind-Value="newPost.Title" placeholder="Enter post title" />
+    </div>
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="newPost.Username" placeholder="Enter username" />
+    </div>
+
+    <div class="form-group">
+        <label for="userId">User ID</label>
+        <InputNumber id="userId" @bind-Value="newPost.UserId" placeholder="Enter user ID" />
+    </div>
+
+    <div class="form-group">
+        <label for="body">Post Content</label>
+        <InputTextArea id="body" @bind-Value="newPost.Body" placeholder="Enter post content" class="form-control" />
+    </div>
+
+    <button type="submit">Create Post</button>
+</EditForm>
+
+@code {
+    private CreatePostDto newPost = new CreatePostDto
+    {
+        Title = string.Empty,
+        Username = string.Empty,
+        UserId = 0,
+        Body = string.Empty // Ensure Body is initialized
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            Console.WriteLine($"Title: {newPost.Title}, Username: {newPost.Username}, UserId: {newPost.UserId}, Body: {newPost.Body}");
+            var createdPost = await PostService.AddPostAsync(newPost);
+            Console.WriteLine("Post created successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating post: {ex.Message}");
+        }
+    }
+}

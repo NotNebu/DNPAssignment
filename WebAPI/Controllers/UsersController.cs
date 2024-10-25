@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     
     // Route til at tilgå brugere
-    [Route("[controller]")]
+    [Route("api/users")]
     public class UsersController : ControllerBase
     {
         private readonly IRepository<User> _userRepository;
@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente alle brugere baseret på brugernavn
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CreateUserDTO>>> GetAllUsers(string? username = null)
+        public async Task<ActionResult<IEnumerable<CreateUserDto>>> GetAllUsers(string? username = null)
         {
             // Henter alle brugere
             var users = await _userRepository.GetAllAsync();
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             }
             
             // Omdanner brugere til DTO'er
-            var userDtos = users.Select(u => new CreateUserDTO
+            var userDtos = users.Select(u => new CreateUserDto
             {
                 UserName = u.UserName,
                 Password = u.Password
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
         
         // Metode til at oprette en bruger
         [HttpPost]
-        public async Task<ActionResult<CreateUserDTO>> AddUser([FromBody] CreateUserDTO request)
+        public async Task<ActionResult<CreateUserDto>> AddUser([FromBody] CreateUserDto request)
         {
             // Opretter en bruger
             var user = new User
@@ -59,7 +59,7 @@ namespace WebAPI.Controllers
             var createdUser = await _userRepository.AddAsync(user);
             
             // Omdanner brugeren til en DTO
-            var userDto = new CreateUserDTO
+            var userDto = new CreateUserDto
             {
                 UserName = createdUser.UserName,
                 Password = createdUser.Password
@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente en bruger baseret på dens Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<CreateUserDTO>> GetUserById(int id)
+        public async Task<ActionResult<CreateUserDto>> GetUserById(int id)
         {
             // Henter bruger baseret på Id
             var user = await _userRepository.GetByIdAsync(id);
@@ -83,7 +83,7 @@ namespace WebAPI.Controllers
             }
 
             // Omdanner bruger til DTO
-            var userDto = new CreateUserDTO
+            var userDto = new CreateUserDto
             {
                 UserName = user.UserName,
                 Password = user.Password 
@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
         
         // Metode til at opdatere en bruger
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateUserDTO request)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateUserDto request)
         {
             // Henter bruger baseret på Id
             var existingUser = await _userRepository.GetByIdAsync(id);

@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     
     // Route til at tilgå kommentarer
-    [Route("[controller]")]
+    [Route("api/comments")]
     
     // Kommentarcontroller til at håndtere kommentarer
     public class CommentsController : ControllerBase
@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente alle kommentarer baseret på userId og postId
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentDTO>>> GetAllComments(int? userId = null, int? postId = null)
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetAllComments(int? userId = null, int? postId = null)
         {
             // Henter alle kommentarer
             var comments = await _commentRepository.GetAllAsync();
@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
             }
             
             // Omdanner kommentarer til DTO'er
-            var commentDtos = comments.Select(c => new CommentDTO
+            var commentDtos = comments.Select(c => new CommentDto
             {
                 Id = c.Id,
                 Body = c.Body,
@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
         
         // Metode til at hente en kommentar baseret på dens Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<CommentDTO>> GetCommentById(int id)
+        public async Task<ActionResult<CommentDto>> GetCommentById(int id)
         {
             // Henter kommentar baseret på Id
             var comment = await _commentRepository.GetByIdAsync(id);
@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
             }
 
             // Omdanner kommentaren til en DTO
-            var commentDto = new CommentDTO
+            var commentDto = new CommentDto
             {
                 Id = comment.Id,
                 Body = comment.Body,
@@ -84,7 +84,7 @@ namespace WebAPI.Controllers
         
         // Metode til at oprette en kommentar
         [HttpPost]
-        public async Task<ActionResult<CommentDTO>> CreateComment([FromBody] CreateCommentDTO request)
+        public async Task<ActionResult<CommentDto>> CreateComment([FromBody] CreateCommentDto request)
         {
             // Returnerer BadRequest, hvis modelstate ikke er valid
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace WebAPI.Controllers
             var createdComment = await _commentRepository.AddAsync(comment);
 
             // Omdanner den nye kommentar til en DTO
-            var commentDto = new CommentDTO
+            var commentDto = new CommentDto
             {
                 Id = createdComment.Id,
                 Body = createdComment.Body,
@@ -118,7 +118,7 @@ namespace WebAPI.Controllers
         
         // Metode til at opdatere en kommentar
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(int id, [FromBody] CreateCommentDTO request)
+        public async Task<IActionResult> UpdateComment(int id, [FromBody] CreateCommentDto request)
         {
             // Returnerer BadRequest, hvis modelstate ikke er valid
             if (!ModelState.IsValid)

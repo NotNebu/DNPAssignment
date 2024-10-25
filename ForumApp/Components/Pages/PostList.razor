@@ -1,0 +1,30 @@
+@page "/posts"
+@using ApiContracts.DTOs
+@using ForumApp.Services
+@inject IPostService PostService
+
+@if (posts == null)
+{
+<p>Loading...</p>
+}
+else
+{
+<ul class="post-list">
+    @foreach (var post in posts)
+    {
+    <li>
+        <a href="@($"/post/{post.Id}")">@post.Title</a>
+        <span class="post-author">by @post.UserId</span>
+    </li>
+    }
+</ul>
+}
+
+@code {
+private List<PostDto> posts;
+
+protected override async Task OnInitializedAsync()
+{
+posts = await PostService.GetPostsAsync();
+}
+}

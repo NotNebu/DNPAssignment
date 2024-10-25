@@ -1,0 +1,44 @@
+@page "/register"
+@using ApiContracts.DTOs
+@using ForumApp.Services
+@inject IUserService UserService
+
+<h2>Register</h2>
+<EditForm Model="@newUser" OnValidSubmit="HandleValidSubmit" class="register-form">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="newUser.UserName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" type="password" @bind-Value="newUser.Password" class="form-control" />
+    </div>
+    <button type="submit">Register</button>
+</EditForm>
+
+@code {
+    private CreateUserDto newUser = new CreateUserDto
+    {
+        UserName = string.Empty,
+        Password = string.Empty
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Log the data being sent
+            Console.WriteLine($"Attempting to register user: Username: {newUser.UserName}, Password: {newUser.Password}");
+            
+            var createdUser = await UserService.AddUserAsync(newUser);
+            Console.WriteLine("User registered successfully.");
+            // You can navigate to another page or show a success message here
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error registering user: {ex.Message}");
+            // Optionally, show a user-friendly error message
+        }
+    }
+
+}

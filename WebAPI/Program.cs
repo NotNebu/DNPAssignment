@@ -52,7 +52,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Konfigurerer applikationen til at bruge endpoints
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // Ikke nødvendig endnu, da vi ikke har authorization 
 app.UseAuthorization();
