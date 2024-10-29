@@ -5,43 +5,45 @@ using ApiContracts.DTOs;
 
 namespace WebAPI.Controllers
 {
-    // Controller til at håndtere posts
+    /// <summary>
+    /// Controller to handle posts.
+    /// </summary>
     [ApiController]
-    
-    // Route til at tilgå posts
     [Route("api/posts")]
-    
-    // PostController til at håndtere posts
     public class PostsController : ControllerBase
     {
         private readonly IRepository<Post> _postRepository;
 
-        // Constructor til at initialisere PostController
+        /// <summary>
+        /// Constructor to initialize PostsController.
+        /// </summary>
+        /// <param name="postRepository">The repository for posts.</param>
         public PostsController(IRepository<Post> postRepository)
         {
             _postRepository = postRepository;
         }
         
-        // Metode til at hente alle posts baseret på titel og userId
+        /// <summary>
+        /// Method to get all posts based on title and userId.
+        /// </summary>
+        /// <param name="title">Optional title to filter posts.</param>
+        /// <param name="userId">Optional userId to filter posts.</param>
+        /// <returns>A list of posts.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostDto>>> GetAllPosts(string? title = null, int? userId = null)
         {
-            // Henter alle posts
             var posts = await _postRepository.GetAllAsync();
 
-            // Filtrer posts baseret på titel
             if (!string.IsNullOrEmpty(title))
             {
                 posts = posts.Where(p => p.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Filtrer posts baseret på userId
             if (userId.HasValue)
             {
                 posts = posts.Where(p => p.UserId == userId.Value);
             }
             
-            // Omdanner posts til DTO'er
             var postDtos = posts.Select(p => new PostDto
             {
                 Id = p.Id,
@@ -50,26 +52,24 @@ namespace WebAPI.Controllers
                 UserId = p.UserId
             });
 
-            // Returnerer posts
             return Ok(postDtos);
         }
         
-        // Metode til at hente en post baseret på dens Id
+        /// <summary>
+        /// Method to get a post by its Id.
+        /// </summary>
+        /// <param name="id">The Id of the post.</param>
+        /// <returns>The post with the specified Id.</returns>
         [HttpGet("{id}")]
-        
-        // Metode til at hente en post baseret på dens Id
         public async Task<ActionResult<PostDto>> GetPostById(int id)
         {
-            // Henter post baseret på Id
             var post = await _postRepository.GetByIdAsync(id);
             
-            // Returnerer NotFound hvis post ikke findes
             if (post == null)
             {
                 return NotFound();
             }
 
-            // Omdanner post til DTO
             var postDto = new PostDto
             {
                 Id = post.Id,
@@ -78,21 +78,22 @@ namespace WebAPI.Controllers
                 UserId = post.UserId
             };
 
-            // Returnerer post
             return Ok(postDto);
         }
         
-        // Metode til at oprette en post
+        /// <summary>
+        /// Method to create a new post.
+        /// </summary>
+        /// <param name="request">The request containing the post details.</param>
+        /// <returns>The created post.</returns>
         [HttpPost]
         public async Task<ActionResult<PostDto>> CreatePost([FromBody] CreatePostDto request)
         {
-            // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Opretter en ny post
             var post = new Post
             {
                 Title = request.Title,
@@ -100,10 +101,8 @@ namespace WebAPI.Controllers
                 UserId = request.UserId
             };
 
-            // Opretter post i databasen
             var createdPost = await _postRepository.AddAsync(post);
 
-            // Omdanner post til en DTO
             var postDto = new PostDto
             {
                 Id = createdPost.Id,
@@ -112,58 +111,57 @@ namespace WebAPI.Controllers
                 UserId = createdPost.UserId
             };
 
-            // Returnerer post
             return CreatedAtAction(nameof(GetPostById), new { id = postDto.Id }, postDto);
         }
         
-        // Metode til at opdatere en post
+        /// <summary>
+        /// Method to update an existing post.
+        /// </summary>
+        /// <param name="id">The Id of the post to update.</param>
+        /// <param name="request">The request containing the updated post details.</param>
+        /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePost(int id, [FromBody] CreatePostDto request)
         {
-            // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            // Henter post baseret på Id
             var existingPost = await _postRepository.GetByIdAsync(id);
             
-            // Returnerer NotFound hvis post ikke findes
             if (existingPost == null)
             {
                 return NotFound();
             }
 
-            // Opdaterer post
             existingPost.Title = request.Title;
             existingPost.UserId = request.UserId;
 
-            // Opdaterer post i databasen
             var updatedPost = await _postRepository.UpdateAsync(existingPost);
             if (updatedPost == null)
             {
                 return NotFound();
             }
             
-            // Returnerer opdateret post
             return NoContent();
         }
         
-        // Metode til at slette en post
+        /// <summary>
+        /// Method to delete a post.
+        /// </summary>
+        /// <param name="id">The Id of the post to delete.</param>
+        /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
-            // Sletter post baseret på Id
             var deleted = await _postRepository.DeleteAsync(id);
             
-            // Returnerer NotFound hvis post ikke findes 
             if (!deleted)
             {
                 return NotFound();
             }
 
-            // Returnerer NoContent hvis post er slettet
             return NoContent();
         }
     }

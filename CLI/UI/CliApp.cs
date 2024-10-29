@@ -5,17 +5,29 @@ using RepositoryContracts;
 
 namespace CLI.UI
 {
+    /// <summary>
+    /// Represents the CLI application.
+    /// </summary>
     public class CliApp
     {
         private readonly ManageUsersView _manageUsersView;
         private readonly ManagePostsView _managePostsView;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CliApp"/> class.
+        /// </summary>
+        /// <param name="userRepository">The repository for users.</param>
+        /// <param name="postRepository">The repository for posts.</param>
+        /// <param name="commentRepository">The repository for comments.</param>
         public CliApp(IRepository<User> userRepository, IRepository<Post> postRepository, IRepository<Comment> commentRepository)
         {
             _manageUsersView = new ManageUsersView(userRepository);
             _managePostsView = new ManagePostsView(postRepository, commentRepository, userRepository);
         }
 
+        /// <summary>
+        /// Runs the CLI application asynchronously.
+        /// </summary>
         public async Task RunAsync()
         {
             while (true)

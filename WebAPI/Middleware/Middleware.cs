@@ -3,56 +3,68 @@ using System.Text.Json;
 
 namespace WebAPI.Middleware
 {
-    // Middleware til at håndtere exceptions
+    /// <summary>
+    /// Middleware to handle exceptions.
+    /// </summary>
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
 
-        // Constructor til at initialisere ExceptionHandlingMiddleware
+        /// <summary>
+        /// Constructor to initialize ExceptionHandlingMiddleware.
+        /// </summary>
+        /// <param name="next">The next middleware in the pipeline.</param>
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
-        // Metode til at håndtere exceptions asynkront
+        /// <summary>
+        /// Method to handle exceptions asynchronously.
+        /// </summary>
+        /// <param name="context">The HTTP context.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            // Prøver at køre næste middleware
             try
             {
-                // Kører næste middleware
+                // Executes the next middleware
                 await _next(context);
             }
-            // Håndterer exception
             catch (Exception ex)
             {
-                // Håndterer exception asynkront og returnerer en fejlbesked
+                // Handles the exception asynchronously and returns an error message
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        // Metode til at håndtere exception asynkront
+        /// <summary>
+        /// Method to handle the exception asynchronously.
+        /// </summary>
+        /// <param name="context">The HTTP context.</param>
+        /// <param name="exception">The exception that occurred.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            // Sætter content type til JSON
+            // Sets the content type to JSON
             context.Response.ContentType = "application/json";
             
-            // Sætter statuskode til InternalServerError
+            // Sets the status code to InternalServerError
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            // Opretter et nyt response-objekt
+            // Creates a new response object
             var response = new
             {
-                // Sætter statuskode
+                // Sets the status code
                 StatusCode = context.Response.StatusCode,
                 Message = "An unexpected error occurred. Please try again later.",
                 Detailed = exception.Message
             };
 
-            // Serializerer response-objektet til JSON
+            // Serializes the response object to JSON
             var jsonResponse = JsonSerializer.Serialize(response);
             
-            // Returnerer JSON-responsen
+            // Returns the JSON response
             return context.Response.WriteAsync(jsonResponse);
         }
     }

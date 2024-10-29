@@ -5,26 +5,33 @@
 
 @if (posts == null)
 {
-<p>Loading...</p>
+    <p>Loading...</p>
 }
 else
 {
-<ul class="post-list">
-    @foreach (var post in posts)
-    {
-    <li>
-        <a href="@($"/post/{post.Id}")">@post.Title</a>
-        <span class="post-author">by @post.UserId</span>
-    </li>
-    }
-</ul>
+    <ul class="post-list">
+        @foreach (var post in posts)
+        {
+            <li>
+                <a href="@($"/post/{post.Id}")">@post.Title</a>
+                <span class="post-author">by @post.UserId</span>
+            </li>
+        }
+    </ul>
 }
 
 @code {
-private List<PostDto> posts;
+    /// <summary>
+    /// Represents the list of posts.
+    /// </summary>
+    private List<PostDto> posts;
 
-protected override async Task OnInitializedAsync()
-{
-posts = await PostService.GetPostsAsync();
-}
+    /// <summary>
+    /// Called when the component is initialized.
+    /// Retrieves the list of posts asynchronously.
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await PostService.GetPostsAsync();
+    }
 }

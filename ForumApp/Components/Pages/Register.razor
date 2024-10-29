@@ -17,12 +17,19 @@
 </EditForm>
 
 @code {
+    /// <summary>
+    /// Represents the new user to be registered.
+    /// </summary>
     private CreateUserDto newUser = new CreateUserDto
     {
         UserName = string.Empty,
         Password = string.Empty
     };
 
+    /// <summary>
+    /// Handles the form submission when the form is valid.
+    /// Attempts to register the new user.
+    /// </summary>
     private async Task HandleValidSubmit()
     {
         try
@@ -37,5 +44,4 @@
             Console.WriteLine($"Error registering user: {ex.Message}");
         }
     }
-
 }

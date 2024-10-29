@@ -33,6 +33,9 @@
 </EditForm>
 
 @code {
+    /// <summary>
+    /// Represents the new post to be created.
+    /// </summary>
     private CreatePostDto newPost = new CreatePostDto
     {
         Title = string.Empty,
@@ -41,6 +44,10 @@
         Body = string.Empty 
     };
 
+    /// <summary>
+    /// Handles the form submission when the form is valid.
+    /// Attempts to create a new post.
+    /// </summary>
     private async Task HandleValidSubmit()
     {
         try

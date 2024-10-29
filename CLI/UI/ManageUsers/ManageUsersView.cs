@@ -1,15 +1,25 @@
 using Entities;
 using RepositoryContracts;
 
+/// <summary>
+/// Provides methods to manage users in the CLI application.
+/// </summary>
 public class ManageUsersView
 {
     private readonly IRepository<User> _userRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManageUsersView"/> class.
+    /// </summary>
+    /// <param name="userRepository">The repository for users.</param>
     public ManageUsersView(IRepository<User> userRepository)
     {
         _userRepository = userRepository;
     }
 
+    /// <summary>
+    /// Prompts the user to create a new user asynchronously.
+    /// </summary>
     public async Task CreateUserAsync()
     {
         Console.Write("Enter username: ");
@@ -31,6 +41,9 @@ public class ManageUsersView
         Console.WriteLine("User created successfully.");
     }
 
+    /// <summary>
+    /// Lists all users asynchronously.
+    /// </summary>
     public async Task ListUsersAsync()
     {
         var users = await _userRepository.GetAllAsync();

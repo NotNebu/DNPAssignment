@@ -3,12 +3,21 @@ using RepositoryContracts;
 
 namespace CLI.UI.ManagePosts
 {
+    /// <summary>
+    /// Provides methods to add comments in the CLI application.
+    /// </summary>
     public class AddCommentView
     {
         private readonly IRepository<Comment> _commentRepository;
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<User> _userRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddCommentView"/> class.
+        /// </summary>
+        /// <param name="commentRepository">The repository for comments.</param>
+        /// <param name="postRepository">The repository for posts.</param>
+        /// <param name="userRepository">The repository for users.</param>
         public AddCommentView(IRepository<Comment> commentRepository, IRepository<Post> postRepository, IRepository<User> userRepository)
         {
             _commentRepository = commentRepository;
@@ -16,6 +25,9 @@ namespace CLI.UI.ManagePosts
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Prompts the user to add a comment to a post asynchronously.
+        /// </summary>
         public async Task AddCommentAsync()
         {
             Console.Write("Enter post ID: ");

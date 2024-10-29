@@ -4,23 +4,34 @@ using RepositoryContracts;
 
 namespace FileRepository;
 
+/// <summary>
+/// File-based implementation of the generic repository.
+/// </summary>
+/// <typeparam name="T">The type of the entity.</typeparam>
 public class FileRepository<T> : IRepository<T> where T : class
 {
     private readonly string filePath;
 
-    // Constructor til at initialisere filstien
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileRepository{T}"/> class with the specified file name.
+    /// </summary>
+    /// <param name="fileName">The name of the file to store the entities.</param>
     public FileRepository(string fileName)
     {
         filePath = $"{fileName}.json";
         
-        // Opretter filen, hvis den ikke findes
+        // Creates the file if it does not exist
         if (!File.Exists(filePath))
         {
             File.WriteAllText(filePath, "[]");
         }
     }
 
-    // Tilføjer en ny entitet til filen asynkront
+    /// <summary>
+    /// Asynchronously adds a new entity to the file.
+    /// </summary>
+    /// <param name="entity">The entity to add.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the added entity.</returns>
     public async Task<T> AddAsync(T entity)
     {
         var entities = await GetAllEntitiesAsync();
@@ -37,13 +48,20 @@ public class FileRepository<T> : IRepository<T> where T : class
         return entity;
     }
 
-    // Henter alle entiteter fra filen asynkront
+    /// <summary>
+    /// Asynchronously gets all entities from the file.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable of entities.</returns>
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await GetAllEntitiesAsync();
     }
 
-    // Henter en entitet ud fra dens ID asynkront
+    /// <summary>
+    /// Asynchronously gets an entity by its identifier.
+    /// </summary>
+    /// <param name="id">The identifier of the entity.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the entity.</returns>
     public async Task<T> GetByIdAsync(int id)
     {
         var entities = await GetAllEntitiesAsync();
@@ -51,7 +69,11 @@ public class FileRepository<T> : IRepository<T> where T : class
                ?? throw new InvalidOperationException();
     }
 
-    // Opdaterer en eksisterende entitet asynkront
+    /// <summary>
+    /// Asynchronously updates an existing entity.
+    /// </summary>
+    /// <param name="entity">The entity to update.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the updated entity.</returns>
     public async Task<T> UpdateAsync(T entity)
     {
         var entities = await GetAllEntitiesAsync();
@@ -69,7 +91,11 @@ public class FileRepository<T> : IRepository<T> where T : class
         return entity;
     }
 
-    // Sletter en entitet ud fra dens ID asynkront
+    /// <summary>
+    /// Asynchronously deletes an entity by its identifier.
+    /// </summary>
+    /// <param name="id">The identifier of the entity to delete.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result indicates whether the deletion was successful.</returns>
     public async Task<bool> DeleteAsync(int id)
     {
         var entities = await GetAllEntitiesAsync();
@@ -82,6 +108,11 @@ public class FileRepository<T> : IRepository<T> where T : class
         return true;
     }
 
+    /// <summary>
+    /// Asynchronously checks if a username exists. Only supported for User entities.
+    /// </summary>
+    /// <param name="username">The username to check.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result indicates whether the username exists.</returns>
     public async Task<bool> UsernameExistsAsync(string username)
     {
         if (typeof(T) == typeof(User))
@@ -93,14 +124,21 @@ public class FileRepository<T> : IRepository<T> where T : class
         throw new InvalidOperationException("UsernameExistsAsync is only supported for User entities.");
     }
 
-    // Metode til at hente alle entiteter fra filen
+    /// <summary>
+    /// Gets all entities from the file.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a list of entities.</returns>
     private async Task<List<T>> GetAllEntitiesAsync()
     {
         string json = await File.ReadAllTextAsync(filePath);
         return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
     }
 
-    // Metode til at gemme alle entiteter i filen
+    /// <summary>
+    /// Saves all entities to the file.
+    /// </summary>
+    /// <param name="entities">The list of entities to save.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task SaveAllEntitiesAsync(List<T> entities)
     {
         string json = JsonSerializer.Serialize(entities);

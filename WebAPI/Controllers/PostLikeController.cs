@@ -5,31 +5,33 @@ using ApiContracts.DTOs;
 
 namespace WebAPI.Controllers
 {
-    // Controller til at håndtere post likes
+    /// <summary>
+    /// Controller to handle post likes.
+    /// </summary>
     [ApiController]
-    
-    // Route til at tilgå post likes
     [Route("api/postlikes")]
-    
-    // PostLikeController til at håndtere post likes
     public class PostLikesController : ControllerBase
     {
         private readonly IRepository<PostLike> _postLikeRepository;
 
-        // Constructor til at initialisere PostLikeController
+        /// <summary>
+        /// Constructor to initialize PostLikesController.
+        /// </summary>
+        /// <param name="postLikeRepository">The repository for post likes.</param>
         public PostLikesController(IRepository<PostLike> postLikeRepository)
         {
             _postLikeRepository = postLikeRepository;
         }
         
-        // Metode til at hente alle post likes
+        /// <summary>
+        /// Method to get all post likes.
+        /// </summary>
+        /// <returns>A list of post likes.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostLikeDto>>> GetAllPostLikes()
         {
-            // Henter alle post likes
             var postLikes = await _postLikeRepository.GetAllAsync();
 
-            // Omdanner post likes til DTO'er
             var postLikeDtos = postLikes.Select(pl => new PostLikeDto
             {
                 Id = pl.Id,
@@ -37,24 +39,24 @@ namespace WebAPI.Controllers
                 UserId = pl.UserId
             });
 
-            // Returnerer post likes
             return Ok(postLikeDtos);
         }
         
-        // Metode til at hente et post like baseret på dets Id
+        /// <summary>
+        /// Method to get a post like by its Id.
+        /// </summary>
+        /// <param name="id">The Id of the post like.</param>
+        /// <returns>The post like with the specified Id.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<PostLikeDto>> GetPostLikeById(int id)
         {
-            // Henter post like baseret på Id
             var postLike = await _postLikeRepository.GetByIdAsync(id);
             
-            // Returnerer NotFound hvis post like ikke findes
             if (postLike == null)
             {
                 return NotFound();
             }
 
-            // Omdanner post like til DTO
             var postLikeDto = new PostLikeDto
             {
                 Id = postLike.Id,
@@ -62,32 +64,30 @@ namespace WebAPI.Controllers
                 UserId = postLike.UserId
             };
 
-            // Returnerer post like
             return Ok(postLikeDto);
         }
         
-        // Metode til at oprette et post like
+        /// <summary>
+        /// Method to create a new post like.
+        /// </summary>
+        /// <param name="request">The request containing the post like details.</param>
+        /// <returns>The created post like.</returns>
         [HttpPost]
         public async Task<ActionResult<PostLikeDto>> CreatePostLike([FromBody] PostLikeDto request)
         {
-            // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
             {
-                // Returnerer BadRequest
                 return BadRequest(ModelState);
             }
 
-            // Opretter et nyt post like
             var postLike = new PostLike
             {
                 PostId = request.PostId,
                 UserId = request.UserId
             };
 
-            // Opretter post like i databasen
             var createdPostLike = await _postLikeRepository.AddAsync(postLike);
 
-            // Omdanner post like til en DTO
             var postLikeDto = new PostLikeDto
             {
                 Id = createdPostLike.Id,
@@ -95,60 +95,58 @@ namespace WebAPI.Controllers
                 UserId = createdPostLike.UserId
             };
 
-            // Returnerer det nye post like
             return CreatedAtAction(nameof(GetPostLikeById), new { id = postLikeDto.Id }, postLikeDto);
         }
         
-        // Metode til at opdatere et post like
+        /// <summary>
+        /// Method to update an existing post like.
+        /// </summary>
+        /// <param name="id">The Id of the post like to update.</param>
+        /// <param name="request">The request containing the updated post like details.</param>
+        /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePostLike(int id, [FromBody] PostLikeDto request)
         {
-            // Returnerer BadRequest hvis modelstate ikke er valid
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            // Henter post like baseret på Id
             var existingPostLike = await _postLikeRepository.GetByIdAsync(id);
             
-            // Returnerer NotFound hvis post like ikke findes
             if (existingPostLike == null)
             {
                 return NotFound();
             }
 
-            // Opdaterer post like
             existingPostLike.PostId = request.PostId;
             existingPostLike.UserId = request.UserId;
 
-            // Opdaterer post like i databasen
             var updatedPostLike = await _postLikeRepository.UpdateAsync(existingPostLike);
             
-            // Returnerer NotFound hvis post like ikke findes
             if (updatedPostLike == null)
             {
                 return NotFound();
             }
 
-            // Returnerer det opdaterede post like
             return NoContent();
         }
         
-        // Metode til at slette et post like
+        /// <summary>
+        /// Method to delete a post like.
+        /// </summary>
+        /// <param name="id">The Id of the post like to delete.</param>
+        /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePostLike(int id)
         {
-            // Sletter post like baseret på Id
             var deleted = await _postLikeRepository.DeleteAsync(id);
             
-            // Returnerer NotFound hvis post like ikke findes
             if (!deleted)
             {
                 return NotFound();
             }
 
-            // Returnerer NoContent hvis post like er slettet
             return NoContent();
         }
     }

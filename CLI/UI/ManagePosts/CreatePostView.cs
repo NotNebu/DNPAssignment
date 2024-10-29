@@ -3,17 +3,28 @@ using RepositoryContracts;
 
 namespace CLI.UI.ManagePosts
 {
+    /// <summary>
+    /// Provides methods to create posts in the CLI application.
+    /// </summary>
     public class CreatePostView
     {
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<User> _userRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreatePostView"/> class.
+        /// </summary>
+        /// <param name="postRepository">The repository for posts.</param>
+        /// <param name="userRepository">The repository for users.</param>
         public CreatePostView(IRepository<Post> postRepository, IRepository<User> userRepository)
         {
             _postRepository = postRepository;
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Prompts the user to create a new post asynchronously.
+        /// </summary>
         public async Task CreatePostAsync()
         {
             Console.Write("Enter post title: ");

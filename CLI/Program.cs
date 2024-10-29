@@ -2,25 +2,30 @@
 using Entities;
 using RepositoryContracts;
 
-
 namespace CLI
 {
+    /// <summary>
+    /// The main entry point for the CLI application.
+    /// </summary>
     public class Program
     {
-        // Main metode til at starte programmet
+        /// <summary>
+        /// The main method to start the program.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static async Task Main(string[] args)
         {
-            // Laver et nyt fil repository for brugere
+            // Creates a new file repository for users
             IRepository<User> userRepository = new FileRepository<User>("users");
-            // Laver et nyt fil repository for posts
+            // Creates a new file repository for posts
             IRepository<Post> postRepository = new FileRepository<Post>("posts");
-            // Laver et nyt fil repository for kommentarer
+            // Creates a new file repository for comments
             IRepository<Comment> commentRepository = new FileRepository<Comment>("comments");
 
-            // Laver et nyt CLI program
+            // Creates a new CLI application
             var cliApp = new CliApp(userRepository, postRepository, commentRepository);
 
-            // Kører programmet
+            // Runs the application
             await cliApp.RunAsync();
         }
     }
