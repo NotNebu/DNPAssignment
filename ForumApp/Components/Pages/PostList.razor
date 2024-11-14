@@ -1,4 +1,6 @@
 @page "/posts"
+@attribute [Authorize]
+
 @using ApiContracts.DTOs
 @using ForumApp.Services
 @inject IPostService PostService

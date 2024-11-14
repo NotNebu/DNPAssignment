@@ -1,5 +1,7 @@
+using ForumApp.Auth;
 using ForumApp.Components;
 using ForumApp.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ForumApp;
 
@@ -20,7 +22,8 @@ public class Program
         builder.Services.AddScoped<IUserService, HttpUserService>();
         builder.Services.AddScoped<IPostService, HttpPostService>();
         builder.Services.AddScoped<ICommentService, HttpCommentService>();
-
+        builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
+        
         // Add Razor components and enable interactive server components
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();

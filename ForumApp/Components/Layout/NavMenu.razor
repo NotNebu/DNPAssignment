@@ -1,0 +1,46 @@
+@using ForumApp.Auth
+<nav class="navbar">
+    <ul class="navbar-list">
+        <AuthorizeView>
+            <Authorized>
+                <li class="navbar-item">
+                    <a href="/" class="navbar-link">Home</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/posts" class="navbar-link">See Posts</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/create-post" class="navbar-link">Create Post</a>
+                </li>
+                <li class="navbar-item">
+                    <button class="navbar-link" @onclick="Logout">Logout</button>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="navbar-item">
+                    <a href="/" class="navbar-link">Home</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/login" class="navbar-link">Login</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/register" class="navbar-link">Register</a>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</nav>
+
+@code {
+[Inject] private NavigationManager NavigationManager { get; set; }
+[Inject] private AuthenticationStateProvider AuthProvider { get; set; }
+
+private async Task Logout()
+{
+if (AuthProvider is SimpleAuthProvider simpleAuthProvider)
+{
+simpleAuthProvider.Logout();
+}
+NavigationManager.NavigateTo("/");
+}
+}
