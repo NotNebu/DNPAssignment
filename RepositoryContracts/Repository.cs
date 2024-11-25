@@ -1,79 +1,77 @@
-﻿namespace RepositoryContracts
+﻿using EfcRepositories;
+using Microsoft.EntityFrameworkCore;
+using Entities;
+
+namespace RepositoryContracts
 {
-    /// <summary>
-    /// Generic repository class that provides basic CRUD operations.
-    /// </summary>
-    /// <typeparam name="T">The type of the entity.</typeparam>
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly FileRepository<T> _fileRepository;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Repository{T}"/> class.
-        /// </summary>
-        /// <param name="fileName">The name of the file to be used by the repository.</param>
-        public Repository(string fileName)
+        private readonly ForumDbContext _context;
+        private readonly DbSet<T> _dbSet;
+
+        public Repository(ForumDbContext context)
         {
-            _fileRepository = new FileRepository<T>(fileName);
+            _context = context;
+            _dbSet = _context.Set<T>();
         }
 
-        /// <summary>
-        /// Asynchronously gets all entities.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable of entities.</returns>
-        public Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return _fileRepository.GetAllAsync();
+            return await _dbSet.ToListAsync();
         }
 
-        /// <summary>
-        /// Asynchronously adds a new entity.
-        /// </summary>
-        /// <param name="entity">The entity to add.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the added entity.</returns>
-        public Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            return _fileRepository.AddAsync(entity);
+            try
+            {
+                Console.WriteLine($"Attempting to add entity: {entity}");
+                await _dbSet.AddAsync(entity); // Stage the entity for insertion
+                await _context.SaveChangesAsync(); // Persist changes to the database
+                Console.WriteLine("Entity added successfully.");
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding entity: {ex.Message}");
+                throw; // Re-throw exception for debugging
+            }
         }
 
-        /// <summary>
-        /// Asynchronously gets an entity by its identifier.
-        /// </summary>
-        /// <param name="id">The identifier of the entity.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the entity.</returns>
-        public Task<T> GetByIdAsync(int id)
+
+        public async Task<T> GetByIdAsync(int id)
         {
-            return _fileRepository.GetByIdAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
-        /// <summary>
-        /// Asynchronously updates an existing entity.
-        /// </summary>
-        /// <param name="entity">The entity to update.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the updated entity.</returns>
-        public Task<T> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
-            return _fileRepository.UpdateAsync(entity);
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
-        /// <summary>
-        /// Asynchronously deletes an entity by its identifier.
-        /// </summary>
-        /// <param name="id">The identifier of the entity to delete.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result indicates whether the deletion was successful.</returns>
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return _fileRepository.DeleteAsync(id);
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+            {
+                return false;
+            }
+
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        /// <summary>
-        /// Asynchronously checks if a username exists.
-        /// </summary>
-        /// <param name="username">The username to check.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result indicates whether the username exists.</returns>
-        public Task<bool> UsernameExistsAsync(string username)
+        public async Task<bool> UsernameExistsAsync(string username)
         {
-            return _fileRepository.UsernameExistsAsync(username);
+            if (typeof(T) == typeof(User))
+            {
+                var users = _dbSet as DbSet<User>;
+                return await users!.AnyAsync(u => u.UserName == username);
+            }
+            throw new InvalidOperationException("UsernameExistsAsync is only applicable for User entities.");
         }
     }
 }

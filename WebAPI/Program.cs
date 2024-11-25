@@ -1,43 +1,43 @@
-using Entities;
+using EfcRepositories;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 using WebAPI.Middleware;
 
-/// <summary>
-/// Configures and runs the web application.
-/// </summary>
+
+namespace WebAPI;
+
 public class Program
 {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    /// <param name="args">The command-line arguments.</param>
     public static void Main(string[] args)
     {
-        // Creates a builder to configure the application
         var builder = WebApplication.CreateBuilder(args);
 
         // Adds services to the application
         builder.Services.AddControllers();
 
-        // Adds scoped services for repositories
-        builder.Services.AddScoped(typeof(IRepository<Post>), provider => new FileRepository<Post>("posts"));
-        builder.Services.AddScoped(typeof(IRepository<Comment>), provider => new FileRepository<Comment>("comments"));
-        builder.Services.AddScoped(typeof(IRepository<User>), provider => new FileRepository<User>("users"));
-        builder.Services.AddScoped(typeof(IRepository<PostLike>), provider => new FileRepository<PostLike>("postLikes"));
+        // Configure DbContext for EF Core with SQLite
+        builder.Services.AddDbContext<ForumDbContext>(options =>
+            options.UseSqlite(@"Data Source=C:\Users\Nebul\Documents\GitHub\DNPAssignment\EfcRepositories\app.db"));
 
-        // Adds endpoints to the application
+
+        // Register generic repository for all entity types
+        builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        // Add endpoints to the application
         builder.Services.AddEndpointsApiExplorer();
-        
 
-        // Configures the application
         var app = builder.Build();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ForumDbContext>();
+            DatabaseSeeder.Seed(context);
+        }
+        
         // Configures the application to use middleware
         app.UseMiddleware<ExceptionHandlingMiddleware>();
-        
-        // Configures the application to use endpoints
-        // app.UseHttpsRedirection();
 
+        // Configures the application to use endpoints
         app.UseAuthorization();
 
         // Configures the application to use controllers
