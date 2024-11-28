@@ -22,7 +22,7 @@
                 {
                     <li class="comment">
                         <p class="comment-body">@comment.Body</p>
-                        <p class="comment-author">User @comment.UserId</p>
+                        <p class="comment-author"><strong>@comment.UserName</strong></p>
                     </li>
                 }
             </ul>
@@ -36,30 +36,13 @@
 </div>
 
 @code {
-    /// <summary>
-    /// Gets or sets the ID of the post.
-    /// </summary>
     [Parameter] public int PostId { get; set; }
 
-    /// <summary>
-    /// Represents the post details.
-    /// </summary>
     private PostDto post;
-
-    /// <summary>
-    /// Represents the list of comments for the post.
-    /// </summary>
     private List<CommentDto> postComments;
 
-    /// <summary>
-    /// Represents the new comment to be added.
-    /// </summary>
     private CreateCommentDto newComment = new CreateCommentDto { Body = string.Empty, PostId = 0 };
 
-    /// <summary>
-    /// Called when the component is initialized.
-    /// Retrieves the post details and comments asynchronously.
-    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         post = await PostService.GetPostByIdAsync(PostId);
@@ -67,10 +50,6 @@
         newComment.PostId = PostId;
     }
 
-    /// <summary>
-    /// Handles the form submission when a new comment is added.
-    /// Adds the comment and refreshes the comment list.
-    /// </summary>
     private async Task HandleCommentSubmit()
     {
         try
@@ -81,7 +60,7 @@
         }
         catch (Exception ex)
         {
-           
+            Console.WriteLine($"Error adding comment: {ex.Message}");
         }
     }
 }

@@ -5,93 +5,39 @@ using ApiContracts.DTOs;
 
 namespace WebAPI.Controllers
 {
-    /// <summary>
-    /// Controller to handle comments.
-    /// </summary>
     [ApiController]
     [Route("api/comments")]
     public class CommentsController : ControllerBase
     {
         private readonly IRepository<Comment> _commentRepository;
-
-        /// <summary>
-        /// Constructor to initialize CommentsController.
-        /// </summary>
-        /// <param name="commentRepository">The repository for comments.</param>
-        public CommentsController(IRepository<Comment> commentRepository)
+        private readonly IRepository<User> _userRepository; 
+        private readonly IRepository<Post> _postRepository; 
+        
+        public CommentsController(
+            IRepository<Comment> commentRepository,
+            IRepository<User> userRepository,
+            IRepository<Post> postRepository)
         {
             _commentRepository = commentRepository;
+            _userRepository = userRepository;
+            _postRepository = postRepository;
         }
         
-        /// <summary>
-        /// Method to get all comments based on userId and postId.
-        /// </summary>
-        /// <param name="userId">Optional userId to filter comments.</param>
-        /// <param name="postId">Optional postId to filter comments.</param>
-        /// <returns>A list of comments.</returns>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentDto>>> GetAllComments(int? userId = null, int? postId = null)
-        {
-            var comments = await _commentRepository.GetAllAsync();
-
-            if (userId.HasValue)
-            {
-                comments = comments.Where(c => c.UserId == userId.Value);
-            }
-
-            if (postId.HasValue)
-            {
-                comments = comments.Where(c => c.PostId == postId.Value);
-            }
-            
-            var commentDtos = comments.Select(c => new CommentDto
-            {
-                Id = c.Id,
-                Body = c.Body,
-                PostId = c.PostId,
-                UserId = c.UserId
-            });
-
-            return Ok(commentDtos);
-        }
-        
-        /// <summary>
-        /// Method to get a comment by its Id.
-        /// </summary>
-        /// <param name="id">The Id of the comment.</param>
-        /// <returns>The comment with the specified Id.</returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CommentDto>> GetCommentById(int id)
-        {
-            var comment = await _commentRepository.GetByIdAsync(id);
-            
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            var commentDto = new CommentDto
-            {
-                Id = comment.Id,
-                Body = comment.Body,
-                PostId = comment.PostId,
-                UserId = comment.UserId
-            };
-
-            return Ok(commentDto);
-        }
-        
-        /// <summary>
-        /// Method to create a new comment.
-        /// </summary>
-        /// <param name="request">The request containing the comment details.</param>
-        /// <returns>The created comment.</returns>
         [HttpPost]
         public async Task<ActionResult<CommentDto>> CreateComment([FromBody] CreateCommentDto request)
         {
-            if (!ModelState.IsValid)
+            // Validate UserId
+            var userExists = await _userRepository.GetByIdAsync(request.UserId);
+            if (userExists == null)
             {
-                return BadRequest(ModelState);
+                return BadRequest($"User with ID {request.UserId} does not exist.");
+            }
+
+            // Validate PostId
+            var postExists = await _postRepository.GetByIdAsync(request.PostId);
+            if (postExists == null)
+            {
+                return BadRequest($"Post with ID {request.PostId} does not exist.");
             }
 
             var comment = new Comment
@@ -108,63 +54,59 @@ namespace WebAPI.Controllers
                 Id = createdComment.Id,
                 Body = createdComment.Body,
                 PostId = createdComment.PostId,
-                UserId = createdComment.UserId
+                UserId = createdComment.UserId,
+                UserName = userExists.UserName // Add username here
             };
 
             return CreatedAtAction(nameof(GetCommentById), new { id = commentDto.Id }, commentDto);
         }
-        
-        /// <summary>
-        /// Method to update an existing comment.
-        /// </summary>
-        /// <param name="id">The Id of the comment to update.</param>
-        /// <param name="request">The request containing the updated comment details.</param>
-        /// <returns>No content if the update is successful.</returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(int id, [FromBody] CreateCommentDto request)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CommentDto>> GetCommentById(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var existingComment = await _commentRepository.GetByIdAsync(id);
-            
-            if (existingComment == null)
+            var comment = await _commentRepository.GetByIdAsync(id);
+            if (comment == null)
             {
                 return NotFound();
             }
 
-            existingComment.Body = request.Body;
-            existingComment.PostId = request.PostId;
-            existingComment.UserId = request.UserId;
-
-            var updatedComment = await _commentRepository.UpdateAsync(existingComment);
-            
-            if (updatedComment == null)
+            var commentDto = new CommentDto
             {
-                return NotFound();
-            }
+                Id = comment.Id,
+                Body = comment.Body,
+                PostId = comment.PostId,
+                UserId = comment.UserId
+            };
 
-            return NoContent();
+            return Ok(commentDto);
         }
         
-        /// <summary>
-        /// Method to delete a comment.
-        /// </summary>
-        /// <param name="id">The Id of the comment to delete.</param>
-        /// <returns>No content if the deletion is successful.</returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetAllComments(int? userId = null, int? postId = null)
         {
-            var deleted = await _commentRepository.DeleteAsync(id);
-            
-            if (!deleted)
+            var comments = await _commentRepository.GetAllAsync();
+
+            if (userId.HasValue)
             {
-                return NotFound();
+                comments = comments.Where(c => c.UserId == userId.Value);
             }
 
-            return NoContent();
+            if (postId.HasValue)
+            {
+                comments = comments.Where(c => c.PostId == postId.Value);
+            }
+
+            // Retrieve usernames by joining with the Users table
+            var commentDtos = comments.Select(c => new CommentDto
+            {
+                Id = c.Id,
+                Body = c.Body,
+                PostId = c.PostId,
+                UserId = c.UserId,
+                UserName = _userRepository.GetByIdAsync(c.UserId)?.Result?.UserName // Fetch username
+            });
+
+            return Ok(commentDtos);
         }
     }
 }

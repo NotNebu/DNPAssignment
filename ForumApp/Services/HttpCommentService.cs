@@ -1,4 +1,5 @@
 using ApiContracts.DTOs;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ForumApp.Services
 {
@@ -8,33 +9,35 @@ namespace ForumApp.Services
     public class HttpCommentService : ICommentService
     {
         private readonly HttpClient _httpClient;
+        private readonly AuthenticationStateProvider _authProvider;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HttpCommentService"/> class.
-        /// </summary>
-        /// <param name="httpClient">The HTTP client used to send requests.</param>
-        public HttpCommentService(HttpClient httpClient)
+        public HttpCommentService(HttpClient httpClient, AuthenticationStateProvider authProvider)
         {
             _httpClient = httpClient;
+            _authProvider = authProvider;
         }
 
-        /// <summary>
-        /// Adds a new comment asynchronously.
-        /// </summary>
-        /// <param name="request">The comment creation request data.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the created comment data.</returns>
         public async Task<CommentDto> AddCommentAsync(CreateCommentDto request)
         {
+            // Extract the UserId from the current authenticated user
+            var authState = await _authProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst("Id")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                throw new Exception("User is not authenticated or UserId is invalid.");
+            }
+
+            Console.WriteLine($"Extracted UserId: {userId}");
+
+            request.UserId = userId; // Assign the UserId to the comment
+
             var response = await _httpClient.PostAsJsonAsync("api/comments", request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<CommentDto>();
         }
 
-        /// <summary>
-        /// Retrieves comments by post ID asynchronously.
-        /// </summary>
-        /// <param name="postId">The ID of the post to retrieve comments for.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a list of comment data.</returns>
+        
         public async Task<List<CommentDto>> GetCommentsByPostIdAsync(int postId)
         {
             return await _httpClient.GetFromJsonAsync<List<CommentDto>>($"api/comments?postId={postId}");
